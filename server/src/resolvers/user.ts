@@ -2,6 +2,7 @@ import { MyContenxt } from 'src/types';
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { User } from '../entities/User';
 import argon2 from 'argon2';
+import { EntityManager } from '@mikro-orm/postgresql';
 
 @InputType()
 class UsernamePasswordInput {
@@ -47,7 +48,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg('options') options: UsernamePasswordInput,
-    @Ctx() { em }: MyContenxt
+    @Ctx() { em, req }: MyContenxt
   ): Promise<UserResponse> {
     if (options.username.length < 2) {
       return {
@@ -68,14 +69,23 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password)
-    const user = em.create(User, {
-      username: options.username,
-      password: hashedPassword
-    });
+    let user;
     try {
-      await em.persistAndFlush(user);
+      const result = await (em as EntityManager)
+        .createQueryBuilder(User)
+        .getKnexQuery()
+        .insert({
+          username: options.username,
+          password: hashedPassword,
+          created_at: new Date(),
+          updated_at: new Date(),
+        })
+        .returning('*');
+      user = result[0];
+
+      console.log(user);
     } catch (err) {
-      if (err.detail.includes('already exists')) {
+      if (err.code === '23505') {
         return {
           errors: [{
             field: 'username',
@@ -84,6 +94,10 @@ export class UserResolver {
         }
       }
     }
+
+    // keep user legged in
+    // after them resgister
+    req.session.userId = user.id;
 
     return { user };
   }
