@@ -11,7 +11,6 @@ import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
 
-
 import redis from 'redis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
@@ -37,8 +36,9 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 Years
         httpOnly: true,
         sameSite: 'lax', // csrf
-        secure: __prod__// cookie only works in https
+        secure: false// cookie only works in https
       }),
+      saveUninitialized: false,
       secret: 'fdfidmdfioemfklemfr',
       resave: false,
     })
