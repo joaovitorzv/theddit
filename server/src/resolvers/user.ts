@@ -55,8 +55,9 @@ export class UserResolver {
     @Arg('options') options: UsernamePasswordInput,
     @Ctx() { em, req }: MyContenxt
   ): Promise<UserResponse> {
-    console.log(options);
-    const errors = validadeRegister(options);
+    const emailExists = !!await em.findOne(User, { email: options.email });
+    const errors = validadeRegister(options, emailExists);
+
     if (errors) {
       return { errors };
     }

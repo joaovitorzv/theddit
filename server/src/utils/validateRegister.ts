@@ -1,6 +1,6 @@
 import { UsernamePasswordInput } from "../resolvers/types/UsernamePasswordInput"
 
-export const validadeRegister = (options: UsernamePasswordInput) => {
+export const validadeRegister = (options: UsernamePasswordInput, emailExists: boolean) => {
   if (!options.email.includes('@')) {
     return [
       {
@@ -35,7 +35,15 @@ export const validadeRegister = (options: UsernamePasswordInput) => {
         message: 'your password must have 3 characters or more'
       }
     ]
+  }
 
+  if (emailExists) {
+    return [
+      {
+        field: 'email',
+        message: 'email already taken'
+      }
+    ]
   }
 
   return null;
