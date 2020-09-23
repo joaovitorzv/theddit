@@ -55,6 +55,7 @@ export class UserResolver {
     @Arg('options') options: UsernamePasswordInput,
     @Ctx() { em, req }: MyContenxt
   ): Promise<UserResponse> {
+    console.log(options);
     const errors = validadeRegister(options);
     if (errors) {
       return { errors };
@@ -68,6 +69,7 @@ export class UserResolver {
         .getKnexQuery()
         .insert({
           username: options.username,
+          email: options.email,
           password: hashedPassword,
           created_at: new Date(),
           updated_at: new Date(),
@@ -75,7 +77,6 @@ export class UserResolver {
         .returning('*');
       user = result[0];
 
-      console.log(user);
     } catch (err) {
       if (err.code === '23505') {
         return {

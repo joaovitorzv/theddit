@@ -13,7 +13,7 @@ export const validadeRegister = (options: UsernamePasswordInput) => {
   if (options.username.length < 2) {
     return [
       {
-        field: 'username',
+        field: 'usernameOrEmail',
         message: 'username must have 2 characters or more'
       }
     ]
@@ -22,7 +22,7 @@ export const validadeRegister = (options: UsernamePasswordInput) => {
   if (options.username.includes('@')) {
     return [
       {
-        field: 'username',
+        field: 'usernameOrEmail',
         message: 'cannot include an @'
       }
     ]
