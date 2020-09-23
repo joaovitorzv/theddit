@@ -1,12 +1,15 @@
-import { MyContenxt } from '../types';
 import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
-import { User } from '../entities/User';
-import argon2 from 'argon2';
+import { MyContenxt } from '../types';
 import { EntityManager } from '@mikro-orm/postgresql';
-import { COOKIE_NAME } from '../constants';
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
+import argon2 from 'argon2';
+import { v4 } from 'uuid';
+
+import { User } from '../entities/User';
 
 import { UsernamePasswordInput } from './types/UsernamePasswordInput';
 import { validadeRegister } from '../utils/validateRegister';
+import { sendMail } from '../utils/sendEmail';
 
 @ObjectType()
 class FieldError {
@@ -31,9 +34,28 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg('email') email: string,
-    @Ctx() { em }: MyContenxt
+    @Ctx() { em, redis }: MyContenxt
   ) {
-    //const userExists = await em.findOne(User, {email})
+    const userExists = await em.findOne(User, { email });
+    if (!userExists) {
+      // email is not in db
+      return true;
+    }
+
+    const token = v4();
+
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      userExists.id,
+      'ex',
+      1000 * 60 * 60 * 24 * 3
+    ); /// 3 days expiration token
+
+    await sendMail(
+      email,
+      `<a href="http://localhost:3000/reset-password/${token}">reset password</a>`
+    );
+
     return true;
   }
 
