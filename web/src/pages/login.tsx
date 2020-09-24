@@ -60,8 +60,8 @@ const Login: React.FC<{}> = ({ }) => {
               Login
             </Button>
 
-            <NextLink href='/'>
-              <Link color='tomato'>Back to home</Link>
+            <NextLink href='/forgot-password'>
+              <Link color='tomato'>Forgot password?</Link>
             </NextLink>
           </Form>
         )}
