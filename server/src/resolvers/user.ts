@@ -153,10 +153,8 @@ export class UserResolver {
         })
         .returning('*')
         .execute();
-      console.log('result: ', result);
-      user = result.raw;
+      user = result.raw[0];
     } catch (err) {
-      console.log('err code: ', err.code);
       if (err.code === '23505') {
         return {
           errors: [{
