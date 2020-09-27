@@ -18,21 +18,9 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 
 import path from 'path';
-
+// 
 const main = async () => {
-  const conn = await createConnection({
-    type: 'postgres',
-    host: 'localhost',
-    database: 'theddit_postgres',
-    username: 'postgres',
-    password: 'docker',
-    logging: true,
-    synchronize: true,
-    entities: [Post, User],
-    migrations: [
-      path.join(__dirname, "./migrations/*")
-    ]
-  });
+  const conn = await createConnection();
   await conn.runMigrations();
 
   const app = express();

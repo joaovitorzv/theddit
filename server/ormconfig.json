@@ -1,0 +1,19 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "username": "postgres",
+  "password": "docker",
+  "database": "theddit_postgres",
+  "synchronize": true,
+  "logging": true,
+  "entities": [
+    "dist/entities/*"
+  ],
+  "migrations": [
+    "dist/migrations/*"
+  ],
+  "cli": {
+    "entitiesDir": "src/entites",
+    "migrationsDir": "src/migrations"
+  }
+}
