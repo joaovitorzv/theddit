@@ -5,12 +5,7 @@ query Posts($limit: Int!, $cursor: String) {
   ) {
     hasMore
     posts {
-      id
-      title
-      textSnippet
-      points
-      creatorId
-      createdAt
+      ...PostSnippet
     }   
   }
 }

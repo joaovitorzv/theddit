@@ -6,8 +6,6 @@ import cors from 'cors';
 
 import { createConnection } from 'typeorm';
 import { COOKIE_NAME, __prod__ } from './constants';
-import { Post } from './entities/Post';
-import { User } from './entities/User';
 
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
@@ -17,8 +15,6 @@ import Redis from 'ioredis';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
 
-import path from 'path';
-// 
 const main = async () => {
   const conn = await createConnection();
   await conn.runMigrations();
